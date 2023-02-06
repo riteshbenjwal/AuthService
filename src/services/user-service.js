@@ -50,6 +50,28 @@ class UserService {
     }
   }
 
+  async isAuthenticated(token) {
+    try {
+      const isTokenVerified = this.verifyToken(token);
+      if (!isTokenVerified) {
+        throw { error: "Invalid token" };
+      }
+      const user = await this.userRepository.getById(isTokenVerified.id);
+
+      if (!user) {
+        throw { error: "User not found" };
+      }
+
+      return user.id;
+    } catch (error) {
+      console.log(
+        "Something went wrong on service layer: token verification: ",
+        error.message
+      );
+      throw error;
+    }
+  }
+
   checkPassword(userInputPlainPassword, encryptedPassword) {
     try {
       return bcrypt.compareSync(userInputPlainPassword, encryptedPassword);
