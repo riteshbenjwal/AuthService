@@ -87,9 +87,8 @@ class UserService {
   async signIn(email, plainPassword) {
     try {
       const user = await this.userRepository.getByEmail(email);
-      if (!user) {
-        throw new Error("User not found");
-      }
+      console.log("signed in user", user);
+
       const isPasswordCorrect = this.checkPassword(
         plainPassword,
         user.password
@@ -102,7 +101,9 @@ class UserService {
       return token;
     } catch (error) {
       console.log("Something went wrong on service layer: sign in");
-      throw error;
+      if (error.name === "AttributeNotFound") {
+        throw error;
+      }
     }
   }
 
