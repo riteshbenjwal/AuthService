@@ -13,6 +13,9 @@ class UserService {
       const user = await this.userRepository.create(data);
       return user;
     } catch (error) {
+      if (error.name == "SequelizeValidationError") {
+        throw error;
+      }
       console.log("Something went wrong on service layer");
       throw error;
     }
@@ -99,6 +102,15 @@ class UserService {
       return token;
     } catch (error) {
       console.log("Something went wrong on service layer: sign in");
+      throw error;
+    }
+  }
+
+  async isAdmin(userId) {
+    try {
+      return await this.userRepository.isAdmin(userId);
+    } catch (error) {
+      console.log("Something went wrong on service layer");
       throw error;
     }
   }
